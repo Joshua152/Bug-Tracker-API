@@ -65,10 +65,12 @@ func main() {
 	// PUT
 	bPutRouter := bugs.Methods(http.MethodPut).Subrouter()
 	bPutRouter.HandleFunc("/{id:[0-9a-zA-z]+}", bh.UpdateBug)
+	bPutRouter.Use(bh.ValidateBug)
 
 	// POST
-	bPostRouter := bugs.Methods(http.MethodGet).Subrouter()
+	bPostRouter := bugs.Methods(http.MethodPost).Subrouter()
 	bPostRouter.HandleFunc("", bh.AddBug)
+	bPostRouter.Use(bh.ValidateBug)
 
 	// DELETE
 	bDeleteRouter := bugs.Methods(http.MethodDelete).Subrouter()

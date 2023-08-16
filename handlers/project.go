@@ -32,7 +32,7 @@ func (p *Project) GetProjects(rw http.ResponseWriter, r *http.Request) {
 	rows, err := p.conn.Query(context.Background(), query)
 	if err != nil {
 		http.Error(rw, "Unable to query project database", http.StatusBadRequest)
-		log.Printf("GET PROJECTS query failed: %v\n", err)
+		log.Printf("Unable to query project database for get: %v\n", err)
 		return
 	}
 
@@ -42,7 +42,7 @@ func (p *Project) GetProjects(rw http.ResponseWriter, r *http.Request) {
 		vals, err := rows.Values()
 		if err != nil {
 			http.Error(rw, "Unable to process data", http.StatusInternalServerError)
-			log.Printf("GET PROJECTS error while iterating dataset: %v\n", err)
+			log.Printf("Error while iterating dataset for get projects: %v\n", err)
 			return
 		}
 
@@ -68,7 +68,7 @@ func (p *Project) GetProject(rw http.ResponseWriter, r *http.Request) {
 	err := p.conn.QueryRow(context.Background(), query, id).Scan(&projectID, &name)
 	if err != nil {
 		http.Error(rw, "Unable to query project database", http.StatusBadRequest)
-		p.l.Printf("Unable to query project for GET: %v", err)
+		p.l.Printf("Unable to query project for get: %v", err)
 		return
 	}
 
@@ -97,11 +97,12 @@ func (p *Project) GetBugs(rw http.ResponseWriter, r *http.Request) {
 		FROM 
 			bug
 		WHERE bug.project_id = $1
+		ORDER BY project_id, bug_id
 	`
 	rows, err := p.conn.Query(context.Background(), query, id)
 	if err != nil {
 		http.Error(rw, "Unable to query bug database", http.StatusBadRequest)
-		p.l.Printf("Unable to query bug database for project bugs GET: %v", err)
+		p.l.Printf("Unable to query bug database for project bugs get: %v", err)
 		return
 	}
 
@@ -111,7 +112,7 @@ func (p *Project) GetBugs(rw http.ResponseWriter, r *http.Request) {
 		vals, err := rows.Values()
 		if err != nil {
 			http.Error(rw, "Unable to process data", http.StatusInternalServerError)
-			log.Printf("GET BUGS error while iterating database: %v\n", err)
+			log.Printf("Error while iterating database for get project bugs: %v\n", err)
 			return
 		}
 
@@ -151,7 +152,7 @@ func (p *Project) UpdateProject(rw http.ResponseWriter, r *http.Request) {
 	query := `
 		UPDATE project
 		SET (project_id, name) = ($1, $2)
-		WHERE project_id = $3;
+		WHERE project_id = $3
 	`
 	_, err := p.conn.Query(context.Background(), query, project.ProjectID, project.Name, id)
 	if err != nil {
@@ -182,12 +183,10 @@ func (p Project) ValidateProject(next http.Handler) http.Handler {
 
 		err := project.FromJSON(r.Body)
 		if err != nil {
-			p.l.Println("[ERROR] DESERIALIZING PRODUCT", err)
+			p.l.Printf("Unable to deserialize product: %v\n", err)
 			http.Error(rw, "Error reading product", http.StatusBadRequest)
 			return
 		}
-
-		p.l.Printf("Project: %v\n", project)
 
 		ctx := context.WithValue(r.Context(), ContextKey{}, project)
 		r = r.WithContext(ctx)
