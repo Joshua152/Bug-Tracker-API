@@ -11,16 +11,23 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
 	"github.com/joshua152/bug-tracker-backend/handlers"
 )
 
 func main() {
 	l := log.New(os.Stdout, "bug-tracker", log.LstdFlags)
 
-	dbURL := "postgres://joshuaau:postgres@localhost:5432/bugtracker"
+	err := godotenv.Load("local.env")
+	if err != nil {
+		log.Fatalf("Unable to load environment variables: %v\n", err)
+	}
+
+	// "postgres://joshuaau:postgres@localhost:5432/bugtracker"
+	dbURL := os.Getenv("DB_URL")
 	conn, err := pgxpool.New(context.Background(), dbURL)
 	if err != nil {
-		log.Fatal("Unable to connect to database: %v\n", err)
+		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
 	defer conn.Close()
 
