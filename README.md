@@ -1,12 +1,15 @@
-# Paths
+# Objects
 
 ### Project:
+<pre>
 {
     project_id: int,
     name: string
 }
+</pre>
 
 ### Bug:
+<pre>
 {
     bug_id: int,
     title: string,
@@ -15,11 +18,13 @@
     complexity: double,
     project_id: int
 }
+</pre>
 
-Routes: 
+# Routes: 
 
 ### /projects
-*GET:* Gets all projects 
+**GET:** Gets all projects 
+<pre>
     Result -  
     [
         {
@@ -27,27 +32,37 @@ Routes:
         },
         ...
     ]
-*POST:* Adds a project into the database
+</pre>
+
+**POST:** Adds a project into the database
+<pre>
     Data - 
     {
         Project
     }
+</pre>
 
 ### /projects/{id}
-*GET:* Gets the project at the given {id}
+**GET:** Gets the project at the given {id}
+<pre>
     Result -
     {
         Project
     }
-*PUT:* Updates the project at the given {id} with the new data
+</pre>
+
+**PUT:** Updates the project at the given {id} with the new data
+<pre>
     Data - 
     {
         Project
     }
-*DELETE:* Deletes the project with the given {id}
+</pre>
+**DELETE:** Deletes the project with the given {id}
 
 ### /projects/{id}/bugs
-*GET:* Gets the bugs from the project with the given {id}
+**GET:** Gets the bugs from the project with the given {id}
+<pre>
     Result - 
     [
         {
@@ -55,9 +70,11 @@ Routes:
         },
         ...
     ]
+</pre>
 
 ### /bugs
-*GET:* Gets all bugs
+**GET:** Gets all bugs
+<pre>
     Result - 
     [
         {
@@ -65,22 +82,28 @@ Routes:
         },
         ...
     ]
-*POST:* Adds a new bug to the databse
+</pre>
+**POST:** Adds a new bug to the databse
+<pre>
     Data -
     {
         Bug
     }
+</pre>
 
 ### /bugs/{id}
-*GET:* Gets bug with the given {id}
+**GET:** Gets bug with the given {id}
+<pre>
     Result - 
     {
         Bug
     }
-*PUT:* Replaces the bug with the given {id} with the data passed in
+</pre>
+**PUT:** Replaces the bug with the given {id} with the data passed in
+<pre>
     Data -
     {
         Bug
     }
-*DELETE:* Deletes the bug with the given {id}
-
+</pre>
+**DELETE:** Deletes the bug with the given {id}
