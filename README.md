@@ -3,7 +3,7 @@
 ### Project:
 <pre>
 {
-    project_id: int,
+    projectID: int,
     name: string
 }
 </pre>
@@ -11,12 +11,12 @@
 ### Bug:
 <pre>
 {
-    bug_id: int,
+    bugID: int,
     title: string,
     description: string,
-    time_amt: double,
+    timeAmt: double,
     complexity: double,
-    project_id: int
+    projectID: int
 }
 </pre>
 

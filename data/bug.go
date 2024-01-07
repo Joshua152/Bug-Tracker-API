@@ -14,7 +14,16 @@ type Bug struct {
 	Complexity  float64 `json:"complexity"`
 }
 
+type Bugs []Bug
+
+// read in bytes instead? and unmarshall
+// pass in decoder where first token is already read? --> can't because can't reverse reading after dec.Token()
 func (b *Bug) FromJSON(r io.Reader) error {
+	// https://pkg.go.dev/encoding/json#Decoder.Decode
 	dec := json.NewDecoder(r)
 	return dec.Decode(b)
+}
+
+func (b *Bugs) ToInterface() {
+
 }

@@ -25,7 +25,11 @@ func main() {
 
 	// "postgres://joshuaau:postgres@localhost:5432/bugtracker"
 	dbURL := os.Getenv("DB_URL")
-	conn, err := pgxpool.New(context.Background(), dbURL)
+	config, err := pgxpool.ParseConfig(dbURL)
+	if err != nil {
+		log.Fatalf("Unable to parse db URL config: %v\n", err)
+	}
+	conn, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
@@ -36,7 +40,7 @@ func main() {
 	ph := handlers.NewProject(conn, l)
 	bh := handlers.NewBug(conn, l)
 
-	// PROJECTS SUB ROUTER
+	// ---------PROJECTS SUB ROUTER---------
 
 	projects := sm.PathPrefix("/projects").Subrouter()
 
@@ -60,7 +64,7 @@ func main() {
 	pDeleteRouter := projects.Methods(http.MethodDelete).Subrouter()
 	pDeleteRouter.HandleFunc("/{id:[0-9a-zA-Z]+}", ph.DeleteProject)
 
-	// BUGS SUB ROUTER
+	// ---------BUGS SUB ROUTER---------
 
 	bugs := sm.PathPrefix("/bugs").Subrouter()
 
