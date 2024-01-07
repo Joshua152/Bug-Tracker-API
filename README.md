@@ -20,7 +20,7 @@
 }
 </pre>
 
-# Routes: 
+# Endpoints: 
 
 ### /projects
 **GET:** Gets all projects 
@@ -89,6 +89,17 @@
     {
         Bug
     }
+
+    OR for batch insert
+
+    [
+        {
+            Bug
+        },
+        {
+            Bug
+        }, ...
+    ]
 </pre>
 
 ### /bugs/{id}
