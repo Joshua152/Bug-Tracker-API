@@ -169,6 +169,13 @@ func (b *Bug) addMultipleBugs(bugCxtVal interface{}) error {
 func (b *Bug) UpdateBug(rw http.ResponseWriter, r *http.Request) {
 	b.l.Println("AT UPDATE BUG")
 
+	in := r.Context().Value(InputTypeContextKey{}).(string)
+	if in == ArrayInputType {
+		http.Error(rw, "Array input not supported", http.StatusBadRequest)
+		b.l.Printf("Array input not supported for UPDATE")
+		return
+	}
+
 	vars := mux.Vars(r)
 	id := vars["id"]
 
@@ -223,8 +230,6 @@ func (b Bug) ValidateBug(next http.Handler) http.Handler {
 			http.Error(rw, "Request body required", http.StatusBadRequest)
 			return
 		}
-
-		b.l.Println(string(trimmedBytes[0]))
 
 		switch trimmedBytes[0] {
 		case '{':
