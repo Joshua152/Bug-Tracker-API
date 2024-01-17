@@ -13,8 +13,8 @@ type Bug struct {
 	Description string    `json:"description"`
 	TimeAmt     float64   `json:"timeAmt"`
 	Complexity  float64   `json:"complexity"`
-	CreatedOn   time.Time `json:"created_on"`
-	LastUpdated time.Time `json:"last_updated"`
+	CreatedOn   time.Time `json:"createdOn"`
+	LastUpdated time.Time `json:"lastUpdated"`
 }
 
 type Bugs []Bug

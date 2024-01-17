@@ -5,6 +5,7 @@
 {
     projectID: int,
     name: string
+    createdOn: time.Time
 }
 </pre>
 

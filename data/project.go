@@ -9,8 +9,8 @@ import (
 type Project struct {
 	ProjectID   int32     `json:"projectID"`
 	Name        string    `json:"name"`
-	CreatedOn   time.Time `json:"created_on"`
-	LastUpdated time.Time `json:"last_updated"`
+	CreatedOn   time.Time `json:"createdOn"`
+	LastUpdated time.Time `json:"lastUpdated"`
 }
 
 func (p *Project) FromJSON(r io.Reader) error {

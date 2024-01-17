@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5"
@@ -63,6 +64,8 @@ func (b *Bug) GetBugs(rw http.ResponseWriter, r *http.Request) {
 			TimeAmt:     vals[3].(float64),
 			Complexity:  vals[4].(float64),
 			ProjectID:   vals[5].(int32),
+			CreatedOn:   vals[6].(time.Time),
+			LastUpdated: vals[7].(time.Time),
 		})
 	}
 
@@ -85,6 +88,8 @@ func (b *Bug) GetBug(rw http.ResponseWriter, r *http.Request) {
 		&bug.TimeAmt,
 		&bug.Complexity,
 		&bug.ProjectID,
+		&bug.CreatedOn,
+		&bug.LastUpdated,
 	)
 	if err != nil {
 		http.Error(rw, "Unable to query bug database", http.StatusBadRequest)
@@ -127,12 +132,14 @@ func (b *Bug) addSingularBug(bugCxtVal interface{}) error {
 			description,
 			time_amt,
 			complexity,
-			project_id
+			project_id,
+			created_on,
+			last_updated
 		)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 	`
 	_, err := b.conn.Query(context.Background(), query, bug.BugID, bug.Title,
-		bug.Description, bug.TimeAmt, bug.Complexity, bug.ProjectID)
+		bug.Description, bug.TimeAmt, bug.Complexity, bug.ProjectID, bug.CreatedOn, bug.LastUpdated)
 
 	return err
 }
@@ -143,7 +150,7 @@ func (b *Bug) addMultipleBugs(bugCxtVal interface{}) error {
 	copyCount, err := b.conn.CopyFrom(
 		context.Background(),
 		pgx.Identifier{"bug"},
-		[]string{"bug_id", "title", "description", "time_amt", "complexity", "project_id"},
+		[]string{"bug_id", "title", "description", "time_amt", "complexity", "project_id", "created_on", "last_updated"},
 		pgx.CopyFromSlice(len(bugs), func(i int) ([]interface{}, error) {
 			return []interface{}{
 				bugs[i].BugID,
@@ -152,6 +159,8 @@ func (b *Bug) addMultipleBugs(bugCxtVal interface{}) error {
 				bugs[i].TimeAmt,
 				bugs[i].Complexity,
 				bugs[i].ProjectID,
+				bugs[i].CreatedOn,
+				bugs[i].LastUpdated,
 			}, nil
 		}),
 	)
@@ -188,12 +197,14 @@ func (b *Bug) UpdateBug(rw http.ResponseWriter, r *http.Request) {
 			description,
 			time_amt,
 			complexity,
-			project_id
-		) = ($1, $2, $3, $4, $5, $6)
-		WHERE bug_id = $7
+			project_id,
+			created_on,
+			last_updated
+		) = ($1, $2, $3, $4, $5, $6, $7, $8)
+		WHERE bug_id = $9
 	`
 	_, err := b.conn.Query(context.Background(), query, bug.BugID, bug.Title,
-		bug.Description, bug.TimeAmt, bug.Complexity, bug.ProjectID, id)
+		bug.Description, bug.TimeAmt, bug.Complexity, bug.ProjectID, bug.CreatedOn, bug.LastUpdated, id)
 	if err != nil {
 		http.Error(rw, "Unable to query bug database", http.StatusBadRequest)
 		b.l.Printf("Unable to query bug for UPDATE: %v\n", err)
