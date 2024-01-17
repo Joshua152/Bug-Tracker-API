@@ -4,8 +4,9 @@
 <pre>
 {
     projectID: int,
-    name: string
-    createdOn: time.Time
+    name: string,
+    createdOn: string (RFC3339 with numeric time zone value; 'Z' can only be on its own at the end),
+    lastUpdated: string (RFC3339)
 }
 </pre>
 
@@ -17,7 +18,9 @@
     description: string,
     timeAmt: double,
     complexity: double,
-    projectID: int
+    projectID: int,
+    createdOn: string (RFC3339),
+    lastUpdated: string (RFC3339)
 }
 </pre>
 
